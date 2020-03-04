@@ -1,0 +1,7 @@
+@juices.map do |juice|
+  {
+    name: juice.name,
+    price: juice.price,
+    description: juice.description,
+  }
+end
