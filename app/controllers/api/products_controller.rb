@@ -1,11 +1,21 @@
 class Api::ProductsController < ApplicationController
-  def juice1_method
-    @product = Product.first
-    render "juice.json.jb"
+  def index
+    @products = Product.all
+    render "index.json.jb"
   end
 
-  def all_juices_action
-    @products = Product.all
-    render "all_juices.json.jb"
+  def create
+    @product = Product.new(
+      name: params["name"],
+      price: params["price"],
+      description: params["description"],
+    )
+    @product.save
+    render "show.json.jb"
+  end
+
+  def show
+    @product = Product.find_by(id: params["id"])
+    render "show.json.jb"
   end
 end

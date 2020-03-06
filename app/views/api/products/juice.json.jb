@@ -1,6 +1,0 @@
-{
-  name: @juice1.name,
-  price: @juice1.price,
-  description: @juice1.description,
-
-}
