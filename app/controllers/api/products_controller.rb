@@ -1,25 +1,13 @@
 class Api::ProductsController < ApplicationController
+  before_action :authenticate_admin, except: [:index, :show]
+
   def index
-    @products = Product.all
-
-    if params[:search]
-      @products = @products.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-
-    if params[:discount] == "true"
-      @products = @products.where("price < 6")
-    end
-
-    if params[:sort] == "price" && params[:sort_order] == "asc"
-      @products = @products.order(:price => :asc)
-    elsif params[:sort] == "price" && params[:sort_order] == "desc"
-      @products = @products.order(:price => :desc)
+    if current_user
+      @products = Product.all
+      render "index.json.jb"
     else
-      @products = @products.order(:id => :asc)
+      render json: []
     end
-
-    # @products = @products.all.order(:price => :desc)
-    # render "index.json.jb"
   end
 
   def create
@@ -28,6 +16,7 @@ class Api::ProductsController < ApplicationController
       price: params["price"],
       description: params["description"],
       supplier_id: params["supplier_id"],
+      user_id: current_user.id,
     )
     if @product.save
       Image.create(url: params[:image_url], product_id: @product.id)
@@ -38,7 +27,7 @@ class Api::ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.find_by(id: params["id"])
+    @product = current_user.products.find_by(id: params[:id])
     render "show.json.jb"
   end
 
