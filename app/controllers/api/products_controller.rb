@@ -2,12 +2,8 @@ class Api::ProductsController < ApplicationController
   before_action :authenticate_admin, except: [:index, :show]
 
   def index
-    if current_user
-      @products = Product.all
-      render "index.json.jb"
-    else
-      render json: []
-    end
+    @products = Product.all
+    render "index.json.jb"
   end
 
   def create
@@ -22,12 +18,12 @@ class Api::ProductsController < ApplicationController
       Image.create(url: params[:image_url], product_id: @product.id)
       render "show.json.jb"
     else
-      render json: { errors: @product.errors.full_messages }
+      render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def show
-    @product = current_user.products.find_by(id: params[:id])
+    @product = Product.find_by(id: params[:id])
     render "show.json.jb"
   end
 
